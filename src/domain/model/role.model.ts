@@ -1,13 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { Role } from '../entities/role.entity';
-import { Scope } from '../entities/scope.entity';
+import { ScopeModel } from './scope.model';
 
 @Injectable()
 export class RoleModel {
   rolesDb: Record<string, Role>;
-  constructor() {}
+  constructor(private readonly scopeModel: ScopeModel) {}
 
-  create(scopes: Scope[]) {}
-  findById(id: string) {}
-  update(id: string, roles: Role[]) {}
+  create(name: string, scopes: string[]) {
+    const newRole = new Role(name, scopes);
+    this.rolesDb[newRole.id] = newRole;
+    return newRole;
+  }
+  findById(ids: string[]) {
+    return ids.map((id) => this.rolesDb[id]);
+  }
 }
