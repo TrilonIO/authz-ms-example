@@ -1,18 +1,23 @@
 import { Injectable } from '@nestjs/common';
+import { RoleRepo } from '../../data';
 import { Role } from '../entities/role.entity';
-import { ScopeModel } from './scope.model';
-
 @Injectable()
 export class RoleModel {
-  rolesDb: Record<string, Role>;
-  constructor(private readonly scopeModel: ScopeModel) {}
+  constructor(private readonly roleRepo: RoleRepo) {}
 
-  create(name: string, scopes: string[]) {
+  async create(name: string, scopes: string[]) {
     const newRole = new Role(name, scopes);
-    this.rolesDb[newRole.id] = newRole;
+    await this.roleRepo.write(newRole);
     return newRole;
   }
-  findById(ids: string[]) {
-    return ids.map((id) => this.rolesDb[id]);
+  async update(role: Role) {
+    await this.roleRepo.write(role);
+    return role;
+  }
+  async findById(ids: string[]) {
+    const roles = await Promise.all(
+      ids.map(async (id) => await this.roleRepo.read(id)),
+    );
+    return roles;
   }
 }

@@ -1,8 +1,15 @@
 services:
   broker:
-    image: nats
-    command: --debug
-    expose:
-      - '4222'
+    image: bitnami/rabbitmq:latest
     ports:
-      - '8222:8222'
+      - '4369:4369'
+      - '5551:5551'
+      - '5552:5552'
+      - '5672:5672'
+      - '25672:25672'
+      - '15672:15672'
+    volumes:
+      - 'rabbitmq_data:/bitnami/rabbitmq/mnesia'
+volumes:
+  rabbitmq_data:
+    driver: local
